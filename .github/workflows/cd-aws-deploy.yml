@@ -1,0 +1,41 @@
+name: CD AWS Deploy
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: cd-production-pfm-web-nextjs
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Publicar imagem assinada (production)
+    runs-on: ubuntu-latest
+    environment: production   # exige aprovação da GMUD (required reviewers)
+    steps:
+      - uses: actions/checkout@v4
+      - name: Autenticar na AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Login no ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - uses: docker/setup-buildx-action@v3
+      - name: Build e push da imagem
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/pfm/pfm-web-nextjs:${{ github.sha }}
+      - uses: sigstore/cosign-installer@v3
+      - name: Assinar imagem (cosign keyless)
+        run: cosign sign --yes "${{ steps.ecr.outputs.registry }}/pfm/pfm-web-nextjs@${{ steps.build.outputs.digest }}"
