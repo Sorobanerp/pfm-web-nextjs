@@ -175,6 +175,12 @@ export default function ConsolidatedDashboardPage() {
             {formatBRL(summary.currentCardInvoices)} • Parcelas:{" "}
             {formatBRL(summary.scheduledInstallments)}
           </p>
+          {summary.trafficLight === "RED" && (
+            <p className="mt-2 text-xs text-rose-300 font-medium">
+              Ação recomendada: revisar pendências no Inbox ou simular redução de
+              parcela em Contratos.
+            </p>
+          )}
         </div>
       </div>
     </div>
