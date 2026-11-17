@@ -80,7 +80,9 @@ const etagMemoryCache = new Map<string, ETagCacheEntry<unknown>>();
 
 const DEFAULT_TENANT_ID = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_PFM_BFF_URL ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_API_URL ??
+  process.env.NEXT_PUBLIC_PFM_BFF_URL ??
+  "http://localhost:18080";
 
 /**
  * Hexagonal Outbound HTTP Adapter with ETag / If-None-Match caching,

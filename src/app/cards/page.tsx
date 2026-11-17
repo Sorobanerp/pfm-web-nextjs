@@ -28,7 +28,9 @@ export default function MultiCardMatrixPage() {
     );
     try {
       const bffUrl =
-        process.env.NEXT_PUBLIC_PFM_BFF_URL ?? "http://localhost:8080";
+        process.env.NEXT_PUBLIC_API_URL ??
+        process.env.NEXT_PUBLIC_PFM_BFF_URL ??
+        "http://localhost:18080";
       await fetch(`${bffUrl}/api/v1/statements/upload`, {
         method: "POST",
         headers: {
