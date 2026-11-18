@@ -1,9 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  DEFAULT_OTLP_ENDPOINT,
+  ensureTraceparent,
   fetchWithETagAndFallback,
+  formatStructuredJsonLog,
   getDemoCreditCards,
   getDemoDashboardSummary,
   getDemoInboxItems,
+  maskSensitivePii,
   simulateContractAmortizationLocal,
 } from "@/adapters/api/pfmHttpClient";
 
@@ -118,5 +122,21 @@ describe("simulateContractAmortizationLocal", () => {
     expect(hi.extraAmortization).toBe(9500);
     const neg = simulateContractAmortizationLocal("SAC", "REDUCE_TERM", 10000, 10, 1, 0, 0, -5);
     expect(neg.extraAmortization).toBe(0);
+  });
+
+  it("propagates W3C traceparent and masks LGPD PII in structured JSON logs", () => {
+    const customTp = "00-11111111111111111111111111111111-2222222222222222-01";
+    expect(ensureTraceparent(customTp)).toBe(customTp);
+    expect(ensureTraceparent("invalid")).toHaveLength(55);
+    expect(maskSensitivePii("")).toBe("");
+    const masked = maskSensitivePii('cpf=123.456.789-01 card=4532 1122 3344 5566 "pdfPassword":"123"');
+    expect(masked).toContain("[CPF_MASKED]");
+    expect(masked).toContain("[PAN_MASKED]");
+    expect(masked).toContain("[REDACTED]");
+
+    const log = formatStructuredJsonLog("", "CPF 11122233344 password=abc", customTp);
+    expect(log).toContain(DEFAULT_OTLP_ENDPOINT);
+    expect(log).toContain("[CPF_MASKED]");
+    expect(log).toContain("[REDACTED]");
   });
 });
