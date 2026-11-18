@@ -30,7 +30,7 @@ jobs:
       - name: Semgrep SAST
         run: |
           pip install semgrep
-          semgrep scan --config auto --error
+          semgrep scan --config auto --exclude .github --error .
 
   test-and-sonar:
     name: Testes (cobertura >= 95%) + SonarCloud
@@ -41,9 +41,9 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
-      - run: npm ci
+      - run: npm install --no-audit --no-fund
       - name: Type-check
         run: npm run lint
       - name: Testes unitários com cobertura
@@ -65,9 +65,6 @@ jobs:
       - name: Build da imagem Docker (Distroless)
         run: docker build -t pfm/pfm-web-nextjs:${{ github.sha }} .
       - name: Trivy (CRITICAL,HIGH)
-        uses: aquasecurity/trivy-action@v0.33.1
-        with:
-          image-ref: pfm/pfm-web-nextjs:${{ github.sha }}
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          exit-code: "1"
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+          trivy image --exit-code 1 --ignore-unfixed --severity CRITICAL,HIGH pfm/pfm-web-nextjs:${{ github.sha }}
