@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-      - run: npm install --no-audit --no-fund
+      - run: npm install --ignore-scripts --no-audit --no-fund
       - name: Type-check
         run: npm run lint
       - name: Testes unitários com cobertura
@@ -66,5 +66,4 @@ jobs:
         run: docker build -t pfm/pfm-web-nextjs:${{ github.sha }} .
       - name: Trivy (CRITICAL,HIGH)
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
-          trivy image --exit-code 1 --ignore-unfixed --severity CRITICAL,HIGH pfm/pfm-web-nextjs:${{ github.sha }}
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/workspace" -w /workspace aquasec/trivy:latest image --exit-code 1 --ignore-unfixed --severity CRITICAL,HIGH pfm/pfm-web-nextjs:${{ github.sha }}
