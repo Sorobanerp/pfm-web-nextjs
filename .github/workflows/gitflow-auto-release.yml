@@ -1,0 +1,54 @@
+name: Gitflow Auto Release (GMUD)
+
+on:
+  push:
+    branches: [develop]
+
+concurrency:
+  group: gitflow-auto-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-pr:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      - name: Calcular versão SemVer da release
+        id: ver
+        run: |
+          git fetch --tags --force
+          last=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)
+          last="${last#v}"
+          existing=$(git ls-remote --heads origin 'refs/heads/release/v*' | sed 's#.*refs/heads/release/v##' | sort -V | tail -n1)
+          next=""
+          if [ -n "$existing" ]; then
+            if [ -z "$last" ] || { [ "$existing" != "$last" ] && [ "$(printf '%s\n%s\n' "$last" "$existing" | sort -V | tail -n1)" = "$existing" ]; }; then
+              next="$existing"   # release em aberto (ainda não publicada): apenas atualiza
+            fi
+          fi
+          if [ -z "$next" ]; then
+            if [ -z "$last" ]; then next="0.1.0"; else IFS=. read -r M m p <<< "$last"; next="$M.$m.$((p+1))"; fi
+          fi
+          echo "version=$next" >> "$GITHUB_OUTPUT"
+      - name: Criar/atualizar branch release/v${{ steps.ver.outputs.version }}
+        run: git push --force origin "HEAD:refs/heads/release/v${{ steps.ver.outputs.version }}"
+      - name: Abrir PR de GMUD (release/* -> main)
+        run: |
+          head="release/v${{ steps.ver.outputs.version }}"
+          open=$(gh pr list --base main --head "$head" --state open --json number --jq 'length')
+          if [ "$open" = "0" ]; then
+            gh pr create --base main --head "$head" \
+              --title "GMUD: Release v${{ steps.ver.outputs.version }}" \
+              --body-file .github/PULL_REQUEST_TEMPLATE/release_gmud.md
+          else
+            echo "PR de GMUD já aberto para $head (branch atualizada)."
+          fi
