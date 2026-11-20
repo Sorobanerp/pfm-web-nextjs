@@ -3,9 +3,9 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "PFM Core Banking V2 — Plataforma Executiva Familiar",
+  title: "PFM Core Banking V3 — Organic Financial Pulse",
   description:
-    "Visão Consolidada, Matriz Multi-Cartões, Inbox IA 3 Camadas e Simulador Imutável SAC/Price/Consórcio",
+    "Plataforma Executiva Familiar: Termômetro Preditivo, Matriz Multi-Cartões, Ingestão PDF RAM, Simulador 30 Anos, Perfil/Família LGPD e Painel SaaS Admin",
 };
 
 export default function RootLayout({
@@ -15,11 +15,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className="min-h-screen bg-slate-950 text-slate-100 antialiased">
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
+      <body className="min-h-screen bg-[#F7F9F5] text-[#141D14] antialiased">
+        <div className="min-h-screen w-full flex flex-col md:flex-row">
+          <Navbar />
+          <main className="flex-1 min-w-0 w-full px-4 sm:px-6 lg:px-10 py-6 pb-24 md:pb-10">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

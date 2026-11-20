@@ -1,8 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --pfm-primary: #8CBA51;
+  --pfm-lime-glow: #DEFF8B;
+  --pfm-lime-text: #141D14;
+  --pfm-warm-peach: #FBCEB5;
+  --pfm-warm-peach-text: #3D1E10;
+  --pfm-coral-critical: #FF5D6C;
+  --pfm-canvas: #F7F9F5;
+  --pfm-surface: #FFFFFF;
+  --pfm-border: #E2E9DC;
+}
+
 body {
-  background-color: #020617;
-  color: #f8fafc;
+  background-color: var(--pfm-canvas);
+  color: var(--pfm-lime-text);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
