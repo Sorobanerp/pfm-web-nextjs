@@ -1,0 +1,53 @@
+name: Conventional Commits Check
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-conventional-commits:
+    name: Validate PR Title & Commits (Conventional Commits)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title and commit messages
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 - <<'PY'
+          import os, re, subprocess, sys
+
+          pattern = re.compile(
+              r"^(feat|fix|docs|refactor|perf|test|chore|ci|build|style|revert|release)"
+              r"(\([a-zA-Z0-9._/-]+\))?!?: .+"
+          )
+
+          title = os.environ["PR_TITLE"].strip()
+          if not pattern.match(title):
+              print(f"ERROR: PR title '{title}' does not follow Conventional Commits.")
+              sys.exit(1)
+          print(f"OK: PR title '{title}'")
+
+          base_sha = os.environ["BASE_SHA"]
+          head_sha = os.environ["HEAD_SHA"]
+          out = subprocess.check_output(
+              ["git", "log", "--no-merges", "--pretty=format:%s", f"{base_sha}..{head_sha}"],
+              text=True,
+          ).strip()
+
+          if out:
+              for msg in out.splitlines():
+                  msg = msg.strip()
+                  if not pattern.match(msg):
+                      print(f"ERROR: Commit '{msg}' does not follow Conventional Commits.")
+                      sys.exit(1)
+                  print(f"OK: Commit '{msg}'")
+          PY
