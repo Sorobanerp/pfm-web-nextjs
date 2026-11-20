@@ -51,7 +51,7 @@ jobs:
 
       - name: Trivy FS (SARIF)
         run: |
-          docker run --rm -v "$PWD:/workspace" -w /workspace aquasec/trivy:latest fs --format sarif --output trivy-fs.sarif --severity CRITICAL,HIGH --ignore-unfixed .
+          docker run --rm -v "$PWD:/workspace" -w /workspace aquasec/trivy:latest fs --offline-scan --scanners vuln,misconfig --format sarif --output trivy-fs.sarif --severity CRITICAL,HIGH --ignore-unfixed .
 
       - name: Upload Trivy SARIF
         if: always() && hashFiles('trivy-fs.sarif') != ''
