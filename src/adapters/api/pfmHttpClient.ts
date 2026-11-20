@@ -80,7 +80,7 @@ const etagMemoryCache = new Map<string, ETagCacheEntry<unknown>>();
 
 const DEFAULT_TENANT_ID = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
 export const DEFAULT_OTLP_ENDPOINT =
-  "http://datadog-agent.monitoring.svc.cluster.local:4318";
+  "https://otel-collector.pfm.internal:4318";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   process.env.NEXT_PUBLIC_PFM_BFF_URL ??
