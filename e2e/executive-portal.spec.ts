@@ -132,3 +132,19 @@ test.describe("PFM Core Banking V2 — 4 Módulos Executivos (Full-Stack E2E)", 
     await expect(page.getByText(/Economia de R\$/i)).toBeVisible();
   });
 });
+
+test("journeys 5 and 6 (/profile and /admin) render responsively on desktop and mobile without horizontal overflow", async ({ page }) => {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 360, height: 800 },
+  ]) {
+    await page.setViewportSize(viewport);
+    for (const route of ["/profile", "/admin"]) {
+      await page.goto(route);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+      );
+      expect(overflow).toBe(false);
+    }
+  }
+});
