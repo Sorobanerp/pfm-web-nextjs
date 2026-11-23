@@ -24,51 +24,25 @@ export const SESSION_STORAGE_KEY = "pfm_pulse_session";
 export const ONBOARDING_STORAGE_KEY = "pfm_pulse_onboarding";
 export const REGISTER_DRAFT_KEY = "pfm_pulse_register_draft";
 
+function makeDevProfile(
+  id: string,
+  label: string,
+  subtitle: string,
+  tenantId: string,
+  tenantName: string,
+  role: PfmUserRole,
+  fallbackToken: string,
+  email: string,
+  redirectTo = "/dashboard"
+): LocalQuickProfile {
+  return { id, label, subtitle, tenantId, tenantName, role, fallbackToken, email, redirectTo };
+}
+
 export const LOCAL_DEV_PROFILES: LocalQuickProfile[] = [
-  {
-    id: "dantas-owner",
-    label: "Família Dantas OWNER",
-    subtitle: "Tenant A • Acesso total",
-    tenantId: "11111111-1111-1111-1111-111111111111",
-    tenantName: "Família Dantas",
-    role: "OWNER",
-    fallbackToken: "dev-token-tenant-a",
-    email: "dantas@pfmpulse.com.br",
-    redirectTo: "/dashboard",
-  },
-  {
-    id: "dantas-viewer",
-    label: "Lucas VIEWER",
-    subtitle: "Tenant A • Somente leitura",
-    tenantId: "11111111-1111-1111-1111-111111111111",
-    tenantName: "Família Dantas",
-    role: "VIEWER",
-    fallbackToken: "dev-viewer-tenant-a",
-    email: "lucas@pfmpulse.com.br",
-    redirectTo: "/dashboard",
-  },
-  {
-    id: "visitante-rls",
-    label: "Carlos Mendes RLS",
-    subtitle: "Tenant B • Isolamento RLS",
-    tenantId: "22222222-2222-2222-2222-222222222222",
-    tenantName: "Família Carlos Mendes",
-    role: "OWNER",
-    fallbackToken: "dev-token-tenant-b",
-    email: "carlos.mendes@pfmpulse.com.br",
-    redirectTo: "/dashboard",
-  },
-  {
-    id: "saas-admin",
-    label: "SaaS Admin",
-    subtitle: "Governança • Zero-Trust LGPD",
-    tenantId: "11111111-1111-1111-1111-111111111111",
-    tenantName: "Soroban SaaS Backoffice",
-    role: "PLATFORM_ADMIN",
-    fallbackToken: "dev-admin-token",
-    email: "sre-admin@soroban.com.br",
-    redirectTo: "/admin",
-  },
+  makeDevProfile("dantas-owner", "Família Dantas OWNER", "Tenant A • Acesso total", "11111111-1111-1111-1111-111111111111", "Família Dantas", "OWNER", "dev-token-tenant-a", "dantas@pfmpulse.com.br"),
+  makeDevProfile("dantas-viewer", "Lucas VIEWER", "Tenant A • Somente leitura", "11111111-1111-1111-1111-111111111111", "Família Dantas", "VIEWER", "dev-viewer-tenant-a", "lucas@pfmpulse.com.br"),
+  makeDevProfile("visitante-rls", "Carlos Mendes RLS", "Tenant B • Isolamento RLS", "22222222-2222-2222-2222-222222222222", "Família Carlos Mendes", "OWNER", "dev-token-tenant-b", "carlos.mendes@pfmpulse.com.br"),
+  makeDevProfile("saas-admin", "SaaS Admin", "Governança • Zero-Trust LGPD", "11111111-1111-1111-1111-111111111111", "Soroban SaaS Backoffice", "PLATFORM_ADMIN", "dev-admin-token", "sre-admin@soroban.com.br", "/admin"),
 ];
 
 export function isLocalAppEnv(): boolean {
