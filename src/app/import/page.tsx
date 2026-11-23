@@ -72,7 +72,9 @@ export default function ImportPdfPage() {
       />
 
       <form
-        onSubmit={handleUpload}
+        onSubmit={(e) => {
+          void handleUpload(e);
+        }}
         className="space-y-5 rounded-3xl border border-[#E6ECE2] bg-white p-6 shadow-sm sm:p-8"
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

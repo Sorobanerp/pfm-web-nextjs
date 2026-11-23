@@ -82,7 +82,9 @@ export default function NfceRadarPage() {
       />
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          void handleSubmit(e);
+        }}
         className="space-y-4 rounded-3xl border border-[#E6ECE2] bg-white p-6 shadow-sm sm:p-8"
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
