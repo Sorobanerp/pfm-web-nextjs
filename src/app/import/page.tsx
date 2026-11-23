@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { FileUp, Lock, ShieldCheck } from "lucide-react";
 import { ConversationalHeader, PulseBadge } from "@/design-system";
-import { apiRequest, PfmApiError } from "@/lib/api/client";
+import { apiRequest, extractApiErrorMessage } from "@/lib/api/client";
 
 interface StatementUploadResponse {
   StatementID?: string;
@@ -52,11 +52,9 @@ export default function ImportPdfPage() {
       });
       setResult(res);
     } catch (err) {
-      if (err instanceof PfmApiError) {
-        setErrorMsg(err.userMessage);
-      } else {
-        setErrorMsg("Não foi possível conectar ao BFF para processar a fatura.");
-      }
+      setErrorMsg(
+        extractApiErrorMessage(err, "Não foi possível conectar ao BFF para processar a fatura.")
+      );
     } finally {
       setLoading(false);
     }

@@ -159,3 +159,7 @@ export async function createTransaction(
     },
   });
 }
+
+export function extractApiErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof PfmApiError ? err.userMessage : fallback;
+}

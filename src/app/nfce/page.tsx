@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { AlertTriangle, Receipt } from "lucide-react";
 import { ConversationalHeader, MoneyInputBRL, PulseBadge } from "@/design-system";
-import { apiRequest, PfmApiError } from "@/lib/api/client";
+import { apiRequest, extractApiErrorMessage } from "@/lib/api/client";
 
 interface InflationAlert {
   ean: string;
@@ -62,11 +62,9 @@ export default function NfceRadarPage() {
       });
       setResult(res);
     } catch (err) {
-      if (err instanceof PfmApiError) {
-        setErrorMsg(err.userMessage);
-      } else {
-        setErrorMsg("Não foi possível registrar o cupom fiscal NFC-e.");
-      }
+      setErrorMsg(
+        extractApiErrorMessage(err, "Não foi possível registrar o cupom fiscal NFC-e.")
+      );
     } finally {
       setLoading(false);
     }
