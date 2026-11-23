@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import {
   CreditCard,
   FileSpreadsheet,
+  FileUp,
   Inbox,
   LayoutDashboard,
   LogOut,
   Plus,
+  Receipt,
   ShieldCheck,
   Users,
   X,
@@ -31,10 +33,12 @@ const AUTH_SHELL_HIDDEN_ROUTES = new Set([
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
-  { href: "/cards", label: "Cartões & Faturas", icon: CreditCard },
+  { href: "/cards", label: "Cartões & Limites", icon: CreditCard },
+  { href: "/import", label: "Importar PDF (RAM)", icon: FileUp },
   { href: "/inbox", label: "Inbox IA", icon: Inbox },
+  { href: "/nfce", label: "Radar NFC-e", icon: Receipt },
   { href: "/contracts", label: "Contratos 30 Anos", icon: FileSpreadsheet },
-  { href: "/profile", label: "Família & LGPD", icon: Users },
+  { href: "/family", label: "Família & LGPD", icon: Users },
   { href: "/admin", label: "SaaS Admin", icon: ShieldCheck },
 ];
 

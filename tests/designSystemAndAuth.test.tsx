@@ -36,6 +36,9 @@ import ResetPasswordPage from "@/app/reset-password/page";
 import OnboardingPage from "@/app/onboarding/page";
 import AdminLoginPage from "@/app/admin/login/page";
 import DashboardAliasPage from "@/app/dashboard/page";
+import ImportPdfPage from "@/app/import/page";
+import NfceRadarPage from "@/app/nfce/page";
+import FamilyAliasPage from "@/app/family/page";
 
 const pushMock = vi.fn();
 
@@ -312,10 +315,10 @@ describe("Auth, SSO, Register, Verify, Recovery, Onboarding & Admin Login Pages"
 
     // Quick local profile
     fireEvent.click(screen.getByText("Família Dantas OWNER"));
-    fireEvent.click(screen.getByText("Família Dantas VIEWER"));
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/dashboard");
     });
+    expect(screen.getByText("Lucas VIEWER")).toBeInTheDocument();
     loginFetchSpy.mockRestore();
   });
 
@@ -393,5 +396,114 @@ describe("Auth, SSO, Register, Verify, Recovery, Onboarding & Admin Login Pages"
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/admin");
     });
+  });
+
+  it("renders ImportPdfPage, NfceRadarPage and FamilyAliasPage", async () => {
+    expect(FamilyAliasPage).toBeDefined();
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            TransactionsCount: 4,
+            DeclaredTotal: "750.90",
+            ComputedTotal: "750.90",
+            checksum_diff: "0.00",
+          }),
+          { status: 200 }
+        )
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            items_ingested: 1,
+            status: "INGESTED_WITH_SKU_INFLATION_TRACKING",
+            inflation_alerts: [
+              {
+                ean: "7891234567890",
+                description: "AZEITE",
+                previous_unit_price: "39.90",
+                current_unit_price: "47.90",
+                inflation_pct: "+20.05%",
+              },
+            ],
+          }),
+          { status: 200 }
+        )
+      );
+
+    const imp = render(<ImportPdfPage />);
+    fireEvent.click(screen.getByText("Enviar e conciliar fatura"));
+    expect(screen.getByText(/Selecione uma fatura PDF/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Emissor"), { target: { value: "NUBANK" } });
+    fireEvent.change(screen.getByLabelText("Final do cartão"), { target: { value: "9041" } });
+    fireEvent.change(screen.getByLabelText("Senha do PDF (opcional)"), { target: { value: "123456" } });
+    const file = new File(["%PDF-1.4"], "fatura.pdf", { type: "application/pdf" });
+    const fileInput = imp.container.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    fireEvent.click(screen.getByText("Enviar e conciliar fatura"));
+    await waitFor(() => {
+      expect(screen.getByText(/Fatura processada e conciliada em RAM/)).toBeInTheDocument();
+    });
+    imp.unmount();
+
+    const nfce = render(<NfceRadarPage />);
+    fireEvent.change(screen.getByLabelText("Chave de acesso SEFAZ (44 dígitos)"), { target: { value: "123" } });
+    fireEvent.click(screen.getByText("Registrar NFC-e e verificar preços"));
+    expect(screen.getByText(/exatamente 44 dígitos/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Chave de acesso SEFAZ (44 dígitos)"), {
+      target: { value: "35261112345678000199650010000123451000999010" },
+    });
+    fireEvent.change(screen.getByLabelText("Estabelecimento"), { target: { value: "PAO DE ACUCAR" } });
+    fireEvent.change(screen.getByLabelText("Código EAN do item"), { target: { value: "7891234567890" } });
+    fireEvent.change(screen.getByLabelText("Descrição do produto"), { target: { value: "AZEITE" } });
+    fireEvent.change(screen.getByLabelText("Preço unitário pago (BRL)"), { target: { value: "4790" } });
+    fireEvent.click(screen.getByText("Registrar NFC-e e verificar preços"));
+    await waitFor(() => {
+      expect(screen.getByText(/Alerta de Inflação Pessoal/)).toBeInTheDocument();
+    });
+    nfce.unmount();
+    fetchSpy.mockRestore();
+  });
+
+  it("handles API 409 Conflict errors on ImportPdfPage, NfceRadarPage and renders FamilyAliasPage", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ message: "Fatura já importada" }), { status: 409 })
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ message: "NFC-e já registrada" }), { status: 409 })
+      );
+
+    const imp = render(<ImportPdfPage />);
+    const file = new File(["%PDF-1.4"], "fatura-dup.pdf", { type: "application/pdf" });
+    fireEvent.change(screen.getByLabelText(/Clique ou arraste sua fatura PDF aqui/), {
+      target: { files: [file] },
+    });
+    fireEvent.click(screen.getByText("Enviar e conciliar fatura"));
+    await waitFor(() => {
+      expect(screen.getByText(/Fatura já importada/)).toBeInTheDocument();
+    });
+    imp.unmount();
+
+    const nfce = render(<NfceRadarPage />);
+    fireEvent.change(screen.getByLabelText("Chave de acesso SEFAZ (44 dígitos)"), {
+      target: { value: "35261112345678000199650010000123451000999010" },
+    });
+    fireEvent.change(screen.getByLabelText("Estabelecimento"), { target: { value: "PAO DE ACUCAR" } });
+    fireEvent.change(screen.getByLabelText("Código EAN do item"), { target: { value: "7891234567890" } });
+    fireEvent.change(screen.getByLabelText("Descrição do produto"), { target: { value: "AZEITE" } });
+    fireEvent.change(screen.getByLabelText("Preço unitário pago (BRL)"), { target: { value: "4790" } });
+    fireEvent.click(screen.getByText("Registrar NFC-e e verificar preços"));
+    await waitFor(() => {
+      expect(screen.getByText(/NFC-e já registrada/)).toBeInTheDocument();
+    });
+    nfce.unmount();
+
+    const fam = render(<FamilyAliasPage />);
+    fam.unmount();
+
+    fetchSpy.mockRestore();
   });
 });

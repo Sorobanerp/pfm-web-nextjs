@@ -1,0 +1,54 @@
+{
+  "projectId": "8104296961408903544",
+  "projectName": "PFM Pulse — Organic Financial Pulse",
+  "source": "stitch-design-reference-export",
+  "designTokens": {
+    "colors": {
+      "canvas": "#F7F9F5",
+      "surface": "#FFFFFF",
+      "surfaceAlt": "#f2fded",
+      "border": "#E6ECE2",
+      "primary": "#8CBA51",
+      "primaryDeep": "#416901",
+      "limeGlow": "#DEFF8B",
+      "limeText": "#141D14",
+      "warmPeach": "#FBCEB5",
+      "warmPeachText": "#3D1E10",
+      "coralCritical": "#FF5D6C",
+      "ink": "#141D14",
+      "muted": "#5A6B5A"
+    },
+    "typography": {
+      "sans": "Plus Jakarta Sans",
+      "mono": "JetBrains Mono",
+      "numericVariant": "tabular-nums"
+    },
+    "radii": {
+      "card": "24px",
+      "input": "16px",
+      "pill": "9999px"
+    }
+  },
+  "screens": [
+    { "stitchId": "pfm_pulse_design_system", "route": "/design-system", "role": "Design Tokens & Component Contract" },
+    { "stitchId": "boas_vindas_pfm_pulse", "route": "/", "role": "Landing / Boas-vindas" },
+    { "stitchId": "boas_vindas_recursos_pfm_pulse", "route": "/", "role": "Recursos Principais" },
+    { "stitchId": "login_sso_pfm_pulse", "route": "/login", "role": "Login SSO (Google/Microsoft) & Troca Rápida Local" },
+    { "stitchId": "cadastro_planos_pfm_pulse", "route": "/register", "role": "Cadastro 3 Passos, Planos BRL & LGPD" },
+    { "stitchId": "verifica_o_otp_pfm_pulse", "route": "/verify", "role": "Validação OTP 6 Dígitos" },
+    { "stitchId": "recupera_o_de_acesso_pfm_pulse", "route": "/forgot-password", "role": "Recuperação de Acesso" },
+    { "stitchId": "onboarding_conversacional_pfm_pulse", "route": "/onboarding", "role": "Wizard Conversacional 3 Perguntas" },
+    { "stitchId": "resumo_ritmo_pfm_pulse", "route": "/dashboard", "role": "Cockpit Executivo Hoje/Semana/Mês (UC-01, UC-06)" },
+    { "stitchId": "entradas_sa_das_multi_cart_es_pfm_pulse", "route": "/cards", "role": "Multi-Cartões, Parcelamentos & NFC-e (UC-02, UC-03, UC-05)" },
+    { "stitchId": "importar_faturas_revis_o_ia_pfm_pulse", "route": "/import", "role": "Upload PDF em RAM & Inbox IA Outros < 5% (UC-02, UC-08)" },
+    { "stitchId": "futuro_contratos_30_anos_pfm_pulse", "route": "/contracts", "role": "Simulador SAC/Price & Consórcio 30 Anos (UC-04)" },
+    { "stitchId": "fam_lia_perfil_privacidade_lgpd_pfm_pulse", "route": "/family", "role": "Espaço Família, Tetos & LGPD Art. 18 (UC-06, US-13)" },
+    { "stitchId": "admin_login_mfa_pfm_pulse", "route": "/admin/login", "role": "Login Corporativo SaaS Admin" },
+    { "stitchId": "console_executivo_saas_admin_pfm_pulse", "route": "/admin", "role": "Console Executivo SaaS Admin (US-12)" }
+  ],
+  "navigation": {
+    "clientRoutes": ["/dashboard", "/cards", "/import", "/inbox", "/nfce", "/contracts", "/family", "/profile"],
+    "adminRoutes": ["/admin", "/admin/login"],
+    "publicRoutes": ["/login", "/register", "/verify", "/forgot-password", "/reset-password"]
+  }
+}
