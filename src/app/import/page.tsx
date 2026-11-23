@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { FileUp, Lock, ShieldCheck } from "lucide-react";
-import { ConversationalHeader, PulseBadge } from "@/design-system";
+import { ConversationalHeader, PulseBadge, PulseErrorAlert, PulseSubmitButton } from "@/design-system";
 import { apiRequest, extractApiErrorMessage } from "@/lib/api/client";
 
 interface StatementUploadResponse {
@@ -143,11 +143,7 @@ export default function ImportPdfPage() {
           />
         </label>
 
-        {errorMsg ? (
-          <p className="rounded-2xl bg-[#FFF5F6] px-4 py-3 text-xs font-medium text-[#FF5D6C]">
-            {errorMsg}
-          </p>
-        ) : null}
+        <PulseErrorAlert message={errorMsg} />
 
         {result ? (
           <div className="rounded-2xl border border-[#8CBA51] bg-[#F7FBF0] p-5">
@@ -174,13 +170,11 @@ export default function ImportPdfPage() {
           </div>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-full bg-[#8CBA51] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#7AA842] disabled:opacity-60"
-        >
-          {loading ? "Processando em memória RAM..." : "Enviar e conciliar fatura"}
-        </button>
+        <PulseSubmitButton
+          loading={loading}
+          idleLabel="Enviar e conciliar fatura"
+          loadingLabel="Processando em memória RAM..."
+        />
       </form>
     </div>
   );

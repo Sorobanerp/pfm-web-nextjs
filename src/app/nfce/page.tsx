@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AlertTriangle, Receipt } from "lucide-react";
-import { ConversationalHeader, MoneyInputBRL, PulseBadge } from "@/design-system";
+import { ConversationalHeader, MoneyInputBRL, PulseBadge, PulseErrorAlert, PulseSubmitButton } from "@/design-system";
 import { apiRequest, extractApiErrorMessage } from "@/lib/api/client";
 
 interface InflationAlert {
@@ -147,11 +147,7 @@ export default function NfceRadarPage() {
           />
         </div>
 
-        {errorMsg ? (
-          <p className="rounded-2xl bg-[#FFF5F6] px-4 py-3 text-xs font-medium text-[#FF5D6C]">
-            {errorMsg}
-          </p>
-        ) : null}
+        <PulseErrorAlert message={errorMsg} />
 
         {result ? (
           <div className="space-y-3 rounded-2xl border border-[#E6ECE2] bg-[#F7F9F5] p-5">
@@ -181,13 +177,11 @@ export default function NfceRadarPage() {
           </div>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-full bg-[#8CBA51] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#7AA842] disabled:opacity-60"
-        >
-          {loading ? "Validando na SEFAZ local..." : "Registrar NFC-e e verificar preços"}
-        </button>
+        <PulseSubmitButton
+          loading={loading}
+          idleLabel="Registrar NFC-e e verificar preços"
+          loadingLabel="Validando na SEFAZ local..."
+        />
       </form>
     </div>
   );
