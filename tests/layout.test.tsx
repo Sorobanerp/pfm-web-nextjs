@@ -12,7 +12,7 @@ describe("RootLayout", () => {
     render(<RootLayout><p>child</p></RootLayout>, { container: document.documentElement });
     err.mockRestore();
     expect(screen.getByText("child")).toBeInTheDocument();
-    expect(screen.getByText("PFM Core Banking V2")).toBeInTheDocument();
-    expect(String(metadata.title)).toContain("PFM Core Banking V2");
+    expect(screen.getAllByText("PFM Core Banking V3").length).toBeGreaterThanOrEqual(1);
+    expect(String(metadata.title)).toContain("PFM Core Banking V3");
   });
 });

@@ -11,8 +11,21 @@ describe("Navbar", () => {
     pathname.mockReturnValue("/cards");
     render(<Navbar />);
     const links = screen.getAllByRole("link");
-    expect(links.map((l) => l.getAttribute("href"))).toEqual(["/", "/cards", "/inbox", "/contracts"]);
-    expect(screen.getByText("2. Matriz Multi-Cartões").className).toContain("bg-emerald-500/20");
-    expect(screen.getByText("3. Inbox de Revisão (IA Camada 1)").className).not.toContain("bg-emerald-500/20");
+    expect(links.map((l) => l.getAttribute("href"))).toEqual([
+      "/",
+      "/cards",
+      "/inbox",
+      "/contracts",
+      "/profile",
+      "/admin",
+      "/",
+      "/cards",
+      "/inbox",
+      "/contracts",
+      "/profile",
+      "/admin",
+    ]);
+    expect(screen.getByText("2. Matriz Multi-Cartões").className).toContain("bg-[#DEFF8B]");
+    expect(screen.getByText("3. Ingestão PDF & Inbox IA").className).not.toContain("bg-[#DEFF8B]");
   });
 });

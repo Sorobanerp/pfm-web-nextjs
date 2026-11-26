@@ -15,3 +15,10 @@ next-env.d.ts
 test-results/
 playwright-report/
 coverage/
+
+# Local environment files (untracked)
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.local.example

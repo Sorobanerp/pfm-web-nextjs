@@ -47,7 +47,7 @@ jobs:
           open=$(gh pr list --base main --head "$head" --state open --json number --jq 'length')
           if [ "$open" = "0" ]; then
             gh pr create --base main --head "$head" \
-              --title "GMUD: Release v${{ steps.ver.outputs.version }}" \
+              --title "chore(release): v${{ steps.ver.outputs.version }}" \
               --body-file .github/PULL_REQUEST_TEMPLATE/release_gmud.md
           else
             echo "PR de GMUD já aberto para $head (branch atualizada)."

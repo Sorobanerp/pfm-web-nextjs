@@ -39,7 +39,9 @@ describe("Dashboard page", () => {
       source: "LIVE_API",
     });
     render(<Page />);
-    await waitFor(() => expect(screen.getByText(new RegExp(`Semáforo: ${light}`))).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText((content) => content.includes(`Semáforo: ${light}`))).toBeInTheDocument()
+    );
     expect(!!screen.queryByText(/Ação recomendada/)).toBe(hasAction);
   });
 

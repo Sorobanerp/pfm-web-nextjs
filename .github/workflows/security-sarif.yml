@@ -1,0 +1,62 @@
+name: Security SARIF Upload
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  sarif-supply-chain:
+    name: Gitleaks + Semgrep + Trivy (SARIF)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks CLI (SARIF)
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks detect --source . --redact --report-format sarif --report-path gitleaks.sarif --exit-code 1
+
+      - name: Upload Gitleaks SARIF
+        if: always() && hashFiles('gitleaks.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif
+          category: gitleaks
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Semgrep SAST (SARIF)
+        run: |
+          pip install -q semgrep
+          semgrep scan --config auto --exclude .github --sarif --output semgrep.sarif --error .
+
+      - name: Upload Semgrep SARIF
+        if: always() && hashFiles('semgrep.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+      - name: Trivy FS (SARIF)
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace aquasec/trivy:latest fs --offline-scan --scanners vuln,misconfig --format sarif --output trivy-fs.sarif --severity CRITICAL,HIGH --ignore-unfixed .
+
+      - name: Upload Trivy SARIF
+        if: always() && hashFiles('trivy-fs.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy
